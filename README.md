@@ -7,20 +7,25 @@
 
 Implementing an REST API exposing four endpoints:
 
-- **/encrypt** - encrypt every **value** of an object at the depth of **one**. Output result as **JSON**. 
+### /Encrypt
+encrypt every **value** of an object at the depth of **one**. Output result as **JSON**. 
+
 > [!NOTE]
 >  the input format is not speficied. By default we will first assume that only json is accepted.
-
-- **/decrypt** - **Detect** encrypted string and decrypt them. return **JSON**.
 
 > [!IMPORTANT] 
 > Use base64 encryption algorithm by default, but the application should be able to handle other by design.
 
+### **/decrypt** 
+
+**Detects** encrypted string and decrypt them. return **JSON**.
+
 > [!NOTE]
 > The statement explicit a detection stage. If the string in input is not encrypted, send an error.
 
-- **/sign** implement an **HMAC** signature mecanism
-- **/verify** implement an **HMAC** signature verification mecanism.
+### /sign and /verify
+
+Implement an **HMAC** signature and verification mecanism
 
 ## Optional features
 
