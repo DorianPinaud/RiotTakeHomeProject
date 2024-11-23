@@ -1,5 +1,5 @@
 """
-WSGI config for riot_take_home project.
+WSGI config for riot_take_home_project project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'riot_take_home.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'riot_take_home_project.settings')
 
 application = get_wsgi_application()
