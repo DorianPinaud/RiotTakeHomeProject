@@ -27,7 +27,16 @@ class TestViews(TestSetup):
             response = self.client.post(
                 self.encrypt_url, data=self.basic_data_to_encode, format="json"
             )
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 429)
+
+    def test_rate_limit_exceeded_for_decoding(self):
+        time.sleep(1)
+        response = None
+        for i in range(61):
+            response = self.client.post(
+                self.decrypt_url, data=self.basic_data_to_decode, format="json"
+            )
+        self.assertEqual(response.status_code, 429)
 
     def test_exact_rate_limit_for_decoding(self):
         time.sleep(1)

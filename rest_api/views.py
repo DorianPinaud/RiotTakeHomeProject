@@ -4,25 +4,30 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 import base64
 import json
-from collections import defaultdict
-import time
+from .rate_limit_service import (
+    RateLimitService,
+    RateLimitTracker,
+    TimeRateLimitTrackerFactory,
+)
+from .utils import ServiceAccessor
 
-nbr_request_by_client = defaultdict(lambda: {"counter": 0, "time": time.time()})
-max_request_per_second = 60
+ServiceAccessor().register(
+    RateLimitService,
+    [
+        TimeRateLimitTrackerFactory(max_limit_in_second=1, max_usage_per_second=60),
+    ],
+)
 
 
 @api_view(["POST"])
 def encryption_endpoint(request: Request):
-    client_remote_address = request.META["REMOTE_ADDR"]
-
-    if (time.time() - nbr_request_by_client[client_remote_address]["time"]) > 1:
-        nbr_request_by_client[client_remote_address]["time"] = time.time()
-        nbr_request_by_client[client_remote_address]["counter"] = 0
-
-    nbr_request_by_client[client_remote_address]["counter"] += 1
-
-    if nbr_request_by_client[client_remote_address]["counter"] > max_request_per_second:
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    rate_limit_service: RateLimitService = ServiceAccessor().get_service(
+        RateLimitService
+    )
+    if not rate_limit_service.get_tracked_user(request.META["REMOTE_ADDR"]).attempt():
+        return Response(
+            status=status.HTTP_429_TOO_MANY_REQUESTS,
+        )
 
     ret = {}
     for key, value in request.data.items():
@@ -37,16 +42,13 @@ def encryption_endpoint(request: Request):
 
 @api_view(["post"])
 def decryption_endpoint(request: Request):
-    client_remote_address = request.META["REMOTE_ADDR"]
-
-    if (time.time() - nbr_request_by_client[client_remote_address]["time"]) > 1:
-        nbr_request_by_client[client_remote_address]["time"] = time.time()
-        nbr_request_by_client[client_remote_address]["counter"] = 0
-
-    nbr_request_by_client[client_remote_address]["counter"] += 1
-
-    if nbr_request_by_client[client_remote_address]["counter"] > max_request_per_second:
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    rate_limit_service: RateLimitService = ServiceAccessor().get_service(
+        RateLimitService
+    )
+    if not rate_limit_service.get_tracked_user(request.META["REMOTE_ADDR"]).attempt():
+        return Response(
+            status=status.HTTP_429_TOO_MANY_REQUESTS,
+        )
 
     ret = {}
     for key, value in request.data.items():
