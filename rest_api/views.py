@@ -9,6 +9,9 @@ from .rate_limit_service import (
     RateLimitTracker,
     TimeRateLimitTrackerFactory,
 )
+
+from .encoder_service import OneDepthEncoder, EncoderStrategyFactory
+from .decoder_service import OneDepthDecoder, Base64DecodingStrategy
 from .utils import ServiceAccessor
 
 ServiceAccessor().register(
@@ -29,15 +32,11 @@ def encryption_endpoint(request: Request):
             status=status.HTTP_429_TOO_MANY_REQUESTS,
         )
 
-    ret = {}
-    for key, value in request.data.items():
-        text = json.dumps(value)
-        text_bytes = text.encode("ascii")
-        base64_byte = base64.b64encode(text_bytes)
-        base64_text = base64_byte.decode("ascii")
-        ret[key] = base64_text
+    encoder = OneDepthEncoder()
 
-    return Response(ret)
+    return Response(
+        encoder.encode(request.data, EncoderStrategyFactory().create_strategy())
+    )
 
 
 @api_view(["post"])
@@ -50,15 +49,8 @@ def decryption_endpoint(request: Request):
             status=status.HTTP_429_TOO_MANY_REQUESTS,
         )
 
-    ret = {}
-    for key, value in request.data.items():
-        base64_byte = value.encode("ascii")
-        text_byte = base64.b64decode(base64_byte)
-        text = text_byte.decode("ascii")
-        data = json.loads(text)
-        ret[key] = data
-
-    return Response(ret)
+    decoder = OneDepthDecoder()
+    return Response(decoder.decode(request.data, Base64DecodingStrategy()))
 
 
 @api_view(["GET"])
