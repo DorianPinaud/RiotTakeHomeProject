@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Union, Dict, List, Any
+import binascii
 import base64
 import json
 
@@ -27,16 +28,35 @@ class Base64DecryptingStrategy(DecryptingStrategy):
             )
 
 
+class HexDecryptingStrategy(DecryptingStrategy):
+
+    def decrypt(self, data: Any) -> Dict:
+        if not isinstance(data, str):
+            raise Exception("'hex' format should be string typed to be decrypted")
+        try:
+            hex_byte = data.encode("ascii")
+            text_byte = binascii.unhexlify(hex_byte)
+            text = text_byte.decode("ascii")
+            return json.loads(text)
+        except ValueError as err:
+            raise Exception(
+                f"Decryption failed because encrypted data are corrupted: {err}"
+            )
+
+
 class DecryptingStrategyFactory:
 
     _decrypt_strategy: Dict
 
     def __init__(self):
-        self._decrypt_strategy = {"base64": Base64DecryptingStrategy()}
+        self._decrypt_strategy = {
+            "base64": Base64DecryptingStrategy(),
+            "hex": HexDecryptingStrategy(),
+        }
 
     def create_strategy(self, name: str) -> DecryptingStrategy:
         if not name in self._decrypt_strategy:
-            raise Exception(f"Decryption format '{name}' not implemented by the api")
+            raise Exception(f"Decryption algorithm '{name}' not implemented by the api")
         return self._decrypt_strategy[name]
 
 

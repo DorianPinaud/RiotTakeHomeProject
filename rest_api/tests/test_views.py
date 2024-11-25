@@ -20,6 +20,26 @@ class TestViews(TestSetup):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, self.basic_data_to_encode)
 
+    def test_hex_encoding(self):
+        time.sleep(1)
+        response = self.client.post(
+            self.encrypt_url + "?algo=hex",
+            data=self.basic_data_to_encode,
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, self.basic_data_to_decode_with_hex_algo)
+
+    def test_hex_decoding(self):
+        time.sleep(1)
+        response = self.client.post(
+            self.decrypt_url + "?algo=hex",
+            data=self.basic_data_to_decode_with_hex_algo,
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, self.basic_data_to_encode)
+
     def test_rate_limit_exceeded_for_encoding(self):
         time.sleep(1)
         response = None

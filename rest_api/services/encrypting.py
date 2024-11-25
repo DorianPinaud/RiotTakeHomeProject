@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Union, Dict, List, Generator, Tuple, Any
 import base64
+import binascii
 import json
 
 
@@ -9,6 +10,16 @@ class EncryptingStrategy(ABC):
     @abstractmethod
     def encrypt(self, data: Any) -> str:
         pass
+
+
+class HexEncryptingStrategy(EncryptingStrategy):
+
+    def encrypt(self, data: Any) -> str:
+        json_text = json.dumps(data)
+        text_bytes = json_text.encode("ascii")
+        hex_bytes = binascii.hexlify(text_bytes)
+        hex_text = hex_bytes.decode("ascii")
+        return hex_text
 
 
 class Base64EncryptingStrategy(EncryptingStrategy):
@@ -26,11 +37,14 @@ class EncryptingStrategyFactory:
     _encrypt_strategy: Dict
 
     def __init__(self):
-        self._encrypt_strategy = {"base64": Base64EncryptingStrategy()}
+        self._encrypt_strategy = {
+            "base64": Base64EncryptingStrategy(),
+            "hex": HexEncryptingStrategy(),
+        }
 
     def create_strategy(self, name: str) -> EncryptingStrategy:
         if not name in self._encrypt_strategy:
-            raise Exception(f"Encryption format '{name}' not implemented by the api")
+            raise Exception(f"Encryption algorithm '{name}' not implemented by the api")
         return self._encrypt_strategy[name]
 
 
