@@ -16,13 +16,13 @@ class SigningStrategy(ABC):
 class HMACSigningStrategy(SigningStrategy):
 
     def sign(self, payload: Any) -> str:
-        data = json.dumps(payload)
-        data_bytes = data.encode("ascii")
         secret = os.getenv("SECRET_KEY")
         if not secret:
             # If no key has been setup in the server side just tell the user
             # that the feature is not available
             raise Exception("The signing features is not available yet.")
+        data = json.dumps(payload)
+        data_bytes = data.encode("ascii")
         secret_bytes = secret.encode()
         hmac_item = hmac.new(secret_bytes, data_bytes, hashlib.sha256)
         return hmac_item.hexdigest()

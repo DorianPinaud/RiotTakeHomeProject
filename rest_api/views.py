@@ -9,6 +9,7 @@ from .services.rate_limiting import (
     RateLimitTracker,
     TimeRateLimitTrackerFactory,
 )
+from .services.verifying import VerifyFormSerializer, VerifyForm, VerifyingService
 
 from .services.decrypting import DecryptingService
 from .services.encrypting import EncryptingService
@@ -20,7 +21,11 @@ ServiceAccessor().register(
     [
         TimeRateLimitTrackerFactory(max_limit_in_second=1, max_usage_per_second=60),
     ],
-).register(DecryptingService).register(EncryptingService).register(SigningService)
+).register(DecryptingService).register(EncryptingService).register(
+    SigningService
+).register(
+    VerifyingService
+)
 
 
 @api_view(["POST"])
@@ -69,5 +74,19 @@ def signing_endpoint(request: Request):
 
 @api_view(["POST"])
 def verification_endpoint(request: Request):
-    # WIP
-    return Response({"info": "Field to vertify data"})
+    rate_limit_service: RateLimitService = ServiceAccessor().get(RateLimitService)
+    verifying_service: VerifyingService = ServiceAccessor().get(VerifyingService)
+    serializer = VerifyFormSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(
+            "The verify form send in entry is not correct",
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    verify_form = VerifyForm(**serializer.validated_data)
+    try:
+        if verifying_service.verify(verify_form):
+            return Response({"info": "The signature is valid"})
+        else:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+    except Exception as err:
+        return Response({"info": str(err)}, status=status.HTTP_400_BAD_REQUEST)
