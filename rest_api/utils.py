@@ -1,9 +1,10 @@
+from __future__ import annotations
 from typing import Dict, Any, List
 
 
 class SingletonMeta(type):
 
-    _instances = {}
+    _instances: Dict = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
@@ -19,8 +20,9 @@ class ServiceAccessor(metaclass=SingletonMeta):
     def __init__(self):
         self._services = {}
 
-    def register(self, service_type: type, params: List) -> None:
+    def register(self, service_type: type, params: List = []) -> ServiceAccessor:
         self._services[service_type] = service_type(*params)
+        return self
 
-    def get_service(self, service_type) -> Any:
+    def get(self, service_type) -> Any:
         return self._services[service_type]

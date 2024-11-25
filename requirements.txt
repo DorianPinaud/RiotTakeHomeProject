@@ -1,2 +1,5 @@
 Django
 djangorestframework
+mypy
+django-stubs
+djangorestframework-stubs

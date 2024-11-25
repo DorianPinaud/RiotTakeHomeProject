@@ -1,4 +1,4 @@
-from .utils import SingletonMeta
+from ..utils import SingletonMeta
 from collections import defaultdict
 from abc import ABC, abstractmethod
 import time
