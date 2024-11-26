@@ -22,7 +22,7 @@ Implementing an REST API exposing four endpoints:
 - **/sign** implement an **HMAC** signature mecanism
 - **/verify** implement an **HMAC** signature verification mecanism.
 
-## Optional features
+## Additional features implemented
 
 - Add a mecanism to select a different encryption algorithm. (new endpoints or add parameters in urls)
 - Add a mecanism to select another cryptographic function for signature (new endpoints or add parameters in urls).
@@ -43,3 +43,8 @@ python -m venv ./env
 pip install -r requirements.txt
 
 ```
+
+
+## Going Live
+
+### Rate limit

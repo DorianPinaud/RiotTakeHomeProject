@@ -71,3 +71,20 @@ class BasicFeatureTesting(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, self.signature)
+
+    def test_verify(self):
+        response = self.client.post(
+            self.verify_url, data=self.basic_verify_form, format="json"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_wrong_verify(self):
+        response = self.client.post(
+            self.verify_url,
+            data={
+                "signature": "toto",
+                "data": {"foo": "foobar", "bar": {"isBar": True}},
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 204)
