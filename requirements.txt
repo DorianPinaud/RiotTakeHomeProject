@@ -3,3 +3,4 @@ djangorestframework
 mypy
 django-stubs
 djangorestframework-stubs
+drf-spectacular

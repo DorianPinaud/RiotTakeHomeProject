@@ -1,0 +1,199 @@
+openapi: 3.0.3
+info:
+  title: Riot Take Home Test
+  version: 1.0.0
+  description: Home work for Riot Technical Review
+paths:
+  /decrypt/:
+    post:
+      operationId: decrypt_create
+      description: Decryption endpoint, can decrypt the data in entry depending of
+        the algorithm selected (by default base64)
+      parameters:
+      - in: query
+        name: algo
+        schema:
+          type: string
+          default: base64
+        description: Specified the algorithms used for encryption
+      tags:
+      - decrypt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: {}
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              additionalProperties: {}
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties: {}
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+          description: ''
+  /encrypt/:
+    post:
+      operationId: encrypt_create
+      description: Encryption endpoint, can encrypt the data in entry depending of
+        the algorithm selected (by default base64). The data in input are traversed
+        with a depth of one
+      parameters:
+      - in: query
+        name: algo
+        schema:
+          type: string
+          default: base64
+        description: Specified the algorithms used for encryption
+      tags:
+      - encrypt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: {}
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              additionalProperties: {}
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties: {}
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+          description: ''
+  /sign/:
+    post:
+      operationId: sign_create
+      description: Signing endpoint, return the signature hash for the data in input
+      tags:
+      - sign
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+          application/x-www-form-urlencoded:
+            schema:
+              type: string
+          multipart/form-data:
+            schema:
+              type: string
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+          description: ''
+  /verify/:
+    post:
+      operationId: verify_create
+      description: verifying endpoint, check the data in entry match the hash signature.
+        Emit an 204 status if it is unmatched
+      tags:
+      - verify
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyForm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyForm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyForm'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+          description: ''
+        '204':
+          description: No response body
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+          description: ''
+components:
+  schemas:
+    InfoResponse:
+      type: object
+      properties:
+        info:
+          type: string
+      required:
+      - info
+    VerifyForm:
+      type: object
+      properties:
+        signature:
+          type: string
+        data:
+          type: object
+          additionalProperties: {}
+      required:
+      - data
+      - signature
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
