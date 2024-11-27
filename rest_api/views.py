@@ -25,6 +25,9 @@ ServiceAccessor().register(DecryptingService).register(EncryptingService).regist
 ).register(VerifyingService)
 
 
+import logging
+logger = logging.getLogger(__name__)
+
 @extend_schema(
     description="Encryption endpoint, can encrypt the data in entry depending of the algorithm selected (by default base64). The data in input are traversed with a depth of one",
     methods=["POST"],
@@ -40,16 +43,13 @@ ServiceAccessor().register(DecryptingService).register(EncryptingService).regist
     request=dict,
     responses={
         200: dict,
-        400: inline_serializer(
-            name="InfoResponse",
-            fields={
-                "info": CharField(),
-            },
-        ),
+        400: dict,
     },
 )
+
 @api_view(["POST"])
 def encryption_endpoint(request: Request):
+    logger.debug("Received POST request on /encrypt/")
     encryption_service: EncryptingService = ServiceAccessor().get(EncryptingService)
     algo_param = request.query_params.get("algo", "base64")
     try:
@@ -71,15 +71,7 @@ def encryption_endpoint(request: Request):
         )
     ],
     request=dict,
-    responses={
-        200: dict,
-        400: inline_serializer(
-            name="InfoResponse",
-            fields={
-                "info": CharField(),
-            },
-        ),
-    },
+    responses={200: dict, 400: dict},
 )
 @api_view(["post"])
 def decryption_endpoint(request: Request):
@@ -97,12 +89,7 @@ def decryption_endpoint(request: Request):
     request=str,
     responses={
         200: str,
-        400: inline_serializer(
-            name="InfoResponse",
-            fields={
-                "info": CharField(),
-            },
-        ),
+        400: dict,
     },
 )
 @api_view(["POST"])
@@ -119,19 +106,9 @@ def signing_endpoint(request: Request):
     methods=["POST"],
     request=VerifyFormSerializer,
     responses={
-        200: inline_serializer(
-            name="InfoResponse",
-            fields={
-                "info": CharField(),
-            },
-        ),
+        200: dict,
         204: None,
-        400: inline_serializer(
-            name="InfoResponse",
-            fields={
-                "info": CharField(),
-            },
-        ),
+        400: dict,
     },
 )
 @extend_schema(request=VerifyFormSerializer)

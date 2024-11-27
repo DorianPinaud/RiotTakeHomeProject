@@ -4,3 +4,4 @@ mypy
 django-stubs
 djangorestframework-stubs
 drf-spectacular
+gunicorn

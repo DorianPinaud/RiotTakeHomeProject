@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-SECRET_KEY = "debug-secret_key"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = True
+DEBUG = False
 APPEND_SLASH = False
 
-ALLOWED_HOSTS: List = []
+ALLOWED_HOSTS: List = ["127.0.0.1", "localhost"]
 
 LOGGING = {
     'version': 1,
@@ -72,6 +72,13 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
     "OPENAPI_VERSION": "3.0.3",
 }
+
+SECURE_HSTS_SECONDS = 300
+SECURE_HSTS_PRELOAD = False
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
