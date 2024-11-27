@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = False
 APPEND_SLASH = False
 
-ALLOWED_HOSTS: List = ["54.89.197.46"]
+ALLOWED_HOSTS: List = ["52.86.10.135", "localhost"]
 
 LOGGING = {
     'version': 1,
