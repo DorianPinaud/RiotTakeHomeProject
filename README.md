@@ -1,55 +1,58 @@
 # Riot Take-Home challenge
 --------------------------
 
-*Project's statement defined here: [tryriot/take-home](https://github.com/tryriot/take-home)*
+# Project statement
 
-## Core features summarize
+*Project's statement is defined here: [tryriot/take-home](https://github.com/tryriot/take-home)*
 
-Implementing an REST API exposing four endpoints:
+Additionnaly the user can choose which algorithm to use for encryption and decryption. For now, only two algorithms are implemented: base64 and hexadecimal (hex).
 
-### /Encrypt
-encrypt every **value** of an object at the depth of **one**. Output result as **JSON**. 
+```bash
+curl -X 'POST' \
+  'http://localhost:8000/encrypt/?algo=hex' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -H 'X-CSRFTOKEN: aqlI8ZMqqlA2nOx7SDTsxPs9Fj8JUhoswZW8R8yOSJH8tjGc6my0UW9wqlpE3kt1' \
+  -d '{
+  "additionalProp1": "string",
+  "additionalProp2": "string",
+  "additionalProp3": "string"
+}'
+```
 
-> [!NOTE]
->  the input format is not speficied. By default we will first assume that only json is accepted.
+## Test online version
 
-> [!IMPORTANT] 
-> Use base64 encryption algorithm by default, but the application should be able to handle other by design.
+The project is already deployed online, you can access it through this IP address: 
+http://52.86.10.135:8000. Here the swagger interface to interact with it: http://52.86.10.135:8000/api/schema/swagger-ui/
 
-### **/decrypt** 
+> [!CAUTION]
+> The rate limit by user ip address is of **60 request per second** otherwise you will received an 429 HTTP response.
 
-**Detects** encrypted string and decrypt them. return **JSON**.
-
-> [!NOTE]
-> The statement explicit a detection stage. If the string in input is not encrypted, send an error.
-
-### /sign and /verify
-
-Implement an **HMAC** signature and verification mecanism
-
-## Additional features implemented
-
-- Add a mecanism to select a different encryption algorithm. (new endpoints or add parameters in urls)
-- Add a mecanism to select another cryptographic function for signature (new endpoints or add parameters in urls).
-
-## Run Project
+## Test in your local environment
 
 > [!IMPORTANT]
 > Python 3.x.y should be installed
 
-Install dependencies.
+Here the different steps to install and run the project on a local debug environement (not suitable for production)
 
 ```powershell
 
+git clone https://github.com/DorianPinaud/RiotTakeHomeProject.git
+
+cd RiotTakeHomeProject
+
 python -m venv ./env
 
-.\env\Scripts\activate # activate the python environment on windows powershell
+# activate the python environment on windows powershell
+.\env\Scripts\activate 
+# activate the python environment on windows linux
+./env/bin/activate
 
 pip install -r requirements.txt
 
+python manage.py runserver
 ```
 
+You can then test the api through the Swagger interface with your browser.
 
-## Going Live
-
-### Rate limit
+> Here the Swagger link: localhost:8000/api/schema/swagger-ui/

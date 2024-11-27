@@ -26,7 +26,7 @@ SECRET_KEY = "debug-secret_key"
 DEBUG = True
 APPEND_SLASH = False
 
-ALLOWED_HOSTS: List = []
+ALLOWED_HOSTS: List = ["52.86.10.135", "localhost"]
 
 LOGGING = {
     'version': 1,
