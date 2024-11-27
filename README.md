@@ -7,6 +7,7 @@
 
 Additionnaly the user can choose which algorithm to use for encryption and decryption. For now, only two algorithms are implemented: base64 and hexadecimal (hex).
 
+*Example with Hexadecimal algorithms*
 ```bash
 curl -X 'POST' \
   'http://localhost:8000/encrypt/?algo=hex' \
@@ -23,10 +24,10 @@ curl -X 'POST' \
 ## Test online version
 
 The project is already deployed online, you can access it through this IP address: 
-http://52.86.10.135:8000. Here the swagger interface to interact with it: http://52.86.10.135:8000/api/schema/swagger-ui/
+52.86.10.135 on the port 8000. Here the swagger interface to interact with it: http://52.86.10.135:8000/api/schema/swagger-ui/
 
 > [!CAUTION]
-> The rate limit by user ip address is of **60 request per second** otherwise you will received an 429 HTTP response.
+> The rate limit by user ip address is set at **60 request per second** otherwise you will received an 429 HTTP response.
 
 ## Test in your local environment
 
@@ -55,4 +56,4 @@ python manage.py runserver
 
 You can then test the api through the Swagger interface with your browser.
 
-> Here the Swagger link: localhost:8000/api/schema/swagger-ui/
+> Here the Swagger link: http://localhost:8000/api/schema/swagger-ui/
